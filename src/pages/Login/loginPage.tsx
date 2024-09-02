@@ -31,6 +31,15 @@ function LoginPage() {
     enabled: false
   })
 
+  const { mutate: logoutMutate } = useMutation({
+    mutationKey: ["logout"],
+    mutationFn: logout,
+    onSuccess: async () => {
+      logoutUserFromStore();
+      return;
+    }
+  })
+
   const { mutate, isPending,isError,error } = useMutation({
     mutationKey: ["login"],
     mutationFn: loginUser,
@@ -41,8 +50,7 @@ function LoginPage() {
       // window.location.herf = http//clint.ui
 
       if (!isAllowed(selfDataPromise.data)) {
-        await logout();
-        logoutUserFromStore();
+        logoutMutate()
         return;
       }
 
