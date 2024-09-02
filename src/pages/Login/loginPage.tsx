@@ -3,8 +3,9 @@ import { LockFilled,UserOutlined,LockOutlined } from "@ant-design/icons"
 import Logo from '../../components/icons/Logo';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Credentials } from '../../types';
-import { login, self } from '../../http/api';
+import { login, logout, self } from '../../http/api';
 import { useAuthStore } from '../../store/store';
+import { usePermission } from '../../hooks/usePermission';
 
 
 const loginUser = async (credentials: Credentials) => {
@@ -20,9 +21,11 @@ const getSelf = async () => {
 
 function LoginPage() {
 
-  const {setUser} = useAuthStore()
+  const { setUser, logout: logoutUserFromStore } = useAuthStore()
+  const { isAllowed } = usePermission()
+  
 
-  const { data: selfData,refetch } = useQuery({
+  const {refetch } = useQuery({
     queryKey: ["self"],
     queryFn: getSelf,
     enabled: false
@@ -34,12 +37,23 @@ function LoginPage() {
     onSuccess: async () => {
       // getSelf
       const selfDataPromise = await refetch();
-      console.log("User Data",selfDataPromise.data);
+      // logout or redirect to clint ui
+      // window.location.herf = http//clint.ui
+
+      if (!isAllowed(selfDataPromise.data)) {
+        await logout();
+        logoutUserFromStore();
+        return;
+      }
+
+      // if (selfDataPromise.data.role === "customer") {
+      //   await logout();
+      //   logoutUserFromStore();
+      //   return;
+      // }
       
       // store in the store
       setUser(selfDataPromise.data)
-
-      
     }
 
   })
