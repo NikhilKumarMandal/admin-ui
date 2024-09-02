@@ -3,6 +3,8 @@ import { self } from "../http/api";
 import { useAuthStore } from "../store/store";
 import { Outlet } from "react-router-dom";
 import { useEffect } from "react";
+import { Layout, Spin } from "antd";
+import { AxiosError } from "axios";
 
 
 
@@ -17,6 +19,12 @@ function Root() {
     const {data,isLoading } = useQuery({
     queryKey: ["self"],
     queryFn: getSelf,
+    retry: (failureCount: number, error) => {
+        if (error instanceof AxiosError && error.response?.status === 401) {
+            return false;
+          }
+          return failureCount < 3;
+        },
     })
 
     useEffect(() => {
@@ -27,7 +35,11 @@ function Root() {
     },[data,setUser])
     
     if (isLoading) {
-        return <div>Loding.....</div>
+        return (
+        <Layout style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+        <Spin  tip="Loading..." size="large" />
+        </Layout>
+        )
     }
   return <Outlet/>  
 }
