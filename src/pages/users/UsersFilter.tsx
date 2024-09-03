@@ -1,9 +1,9 @@
 import { Card, Col, Form, Input, Row, Select } from 'antd';
 
 type UsersFilterProps = {
-    children?: React.ReactNode;
+    onFilterChange: (filterName: string, filterValue: string) => void;
 };
-const UsersFilter = ({ children }: UsersFilterProps) => {
+const UsersFilter = ({ onFilterChange }: UsersFilterProps) => {
     return (
         <Card>
             <Row justify="space-between">
@@ -11,7 +11,7 @@ const UsersFilter = ({ children }: UsersFilterProps) => {
                     <Row gutter={20}>
                         <Col span={8}>
                             <Form.Item name="q">
-                                <Input.Search allowClear={true} placeholder="Search" />
+                                <Input.Search allowClear={true} placeholder="Search" onChange={(e) => onFilterChange("searchUser",e.target.value)} />
                             </Form.Item>
                         </Col>
                         <Col span={8}>
@@ -19,7 +19,9 @@ const UsersFilter = ({ children }: UsersFilterProps) => {
                                 <Select
                                     style={{ width: '100%' }}
                                     allowClear={true}
-                                    placeholder="Select role">
+                                    placeholder="Select role"
+                                    onChange={(selectedItem) => onFilterChange("roleFilter",selectedItem) }
+                                >
                                     <Select.Option value="admin">Admin</Select.Option>
                                     <Select.Option value="manager">Manager</Select.Option>
                                     <Select.Option value="customer">Customer</Select.Option>
@@ -30,7 +32,9 @@ const UsersFilter = ({ children }: UsersFilterProps) => {
                             <Select
                                 style={{ width: '100%' }}
                                 placeholder="Status"
-                                allowClear={true}>
+                                allowClear={true}
+                                onChange={(selectedItem) => onFilterChange("statusFilter",selectedItem) }
+                            >
                                 <Select.Option value="ban">Ban</Select.Option>
                                 <Select.Option value="active">Active</Select.Option>
                             </Select>
@@ -38,7 +42,7 @@ const UsersFilter = ({ children }: UsersFilterProps) => {
                     </Row>
                 </Col>
                 <Col span={8} style={{ display: 'flex', justifyContent: 'end' }}>
-                    {children}
+                    hello
                 </Col>
             </Row>
         </Card>

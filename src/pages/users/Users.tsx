@@ -83,8 +83,11 @@ function Users() {
                     },
                 ]}
                 />
-                <UsersFilter/>
-                <Table columns={columns} dataSource={users} />
+                <UsersFilter onFilterChange={(filterName: string,filterValue: string) => {
+                        console.log(filterName,filterValue);
+                        
+                }}/>
+                <Table columns={columns} dataSource={users} rowKey={"id"} />
                 </Space>
             {/* <ul>
                 {users.map((user:User) => (
