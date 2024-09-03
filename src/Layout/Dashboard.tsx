@@ -1,14 +1,16 @@
 import { Navigate, NavLink, Outlet } from 'react-router-dom'
 import { useAuthStore } from '../store/store'
-import {  Layout, Menu, theme } from 'antd';
+import {  Avatar, Badge, Dropdown, Flex, Layout, Menu, Space, theme } from 'antd';
 import { useState } from 'react';
 const { Header, Content, Footer, Sider } = Layout;
 import Logo from '../components/icons/Logo';
-import Icon from '@ant-design/icons';
+import Icon, { BellFilled } from '@ant-design/icons';
 import Home from '../components/icons/Home';
 import FoodIcons from "../components/icons/FoodIcons"
 import BasketIcon from '../components/icons/BasketIcon';
 import GiftIcon from '../components/icons/GiftIcon';
+import { useMutation } from '@tanstack/react-query';
+import { logout } from '../http/api';
 
 const items = [
     {
@@ -34,28 +36,63 @@ const items = [
 ]
 
 function Dashboard() {
-    const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
+    const { logout: logoutUserFromStore } = useAuthStore()
     const {
     token: { colorBgContainer},
-    } = theme.useToken();
-    const { user } = useAuthStore()
-    if (user === null) {
-        return <Navigate to="/auth/login" replace={ true } />
-    }
+  } = theme.useToken();
+
+  const { mutate: logoutMutate } = useMutation({
+  mutationKey: ["logout"],
+  mutationFn: logout,
+  onSuccess: async () => {
+  logoutUserFromStore();
+  return;
+  }
+  })
+  
+  const { user } = useAuthStore()
+  
+  if (user === null) {
+      return <Navigate to="/auth/login" replace={ true } />
+  }
+  
     return (
         <div>
         <Layout style={{ minHeight: '100vh' }}>
-                <Sider
-                theme='light'
-                collapsible
-                collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
+          <Sider
+          theme='light'
+          collapsible
+          collapsed={collapsed} onCollapse={(value) => setCollapsed(value)}>
         <div className="logo" >
-            <Logo/>           
+          <Logo/>           
         </div>
         <Menu theme="light" defaultSelectedKeys={['/']} mode="inline" items={items} />
       </Sider>
       <Layout>
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+        <Header style={{ paddingLeft: "16px",paddingRight: "16px", background: colorBgContainer }} >
+        <Flex gap="middle" align="start" justify='space-between'>
+          <Badge status='success' text="Hello" />
+          <Space size={16}>
+            <Badge dot={true}>
+            <BellFilled />
+            </Badge>    
+            <Dropdown menu={{
+            items: [
+              {
+                key: "logout",
+                label: "logout",
+                onClick: () => logoutMutate()
+              } 
+            ]
+            }}
+            placement="bottomRight">
+           <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>U</Avatar>
+          </Dropdown>    
+
+          </Space>   
+        </Flex>
+        </Header>
         <Content style={{ margin: '0 16px' }}>
           <Outlet/>
         </Content>
