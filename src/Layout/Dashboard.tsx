@@ -72,7 +72,7 @@ function Dashboard() {
       <Layout>
         <Header style={{ paddingLeft: "16px",paddingRight: "16px", background: colorBgContainer }} >
         <Flex gap="middle" align="start" justify='space-between'>
-          <Badge status='success' text="Hello" />
+          <Badge status='success' text={user?.role === "admin" ? "You are an admin" : user?.tenant?.address} />
           <Space size={16}>
             <Badge dot={true}>
             <BellFilled />
