@@ -19,6 +19,11 @@ const items = [
         label: <NavLink to="/">Home</NavLink>
     },
     {
+        key: '/users',
+        icon: <Icon component={FoodIcons} />,
+        label: <NavLink to="/users">Users</NavLink>,
+    },
+    {
         key: '/products',
         icon: <Icon component={FoodIcons} />,
         label: <NavLink to="/products">Products</NavLink>,
@@ -93,7 +98,7 @@ function Dashboard() {
           </Space>   
         </Flex>
         </Header>
-        <Content style={{ margin: '0 16px' }}>
+        <Content style={{ margin: '24px' }}>
           <Outlet/>
         </Content>
         <Footer style={{ textAlign: 'center' }}>
