@@ -73,13 +73,13 @@ function HomePage() {
   const getGreeting = () => {
     const currentHour = new Date().getHours();
     
-    if (currentHour >= 5 && currentHour < 12) {
-      return "Good Morning";
-    } else if (currentHour >= 12 && currentHour < 18) {
-      return "Good Afternoon";
-    } else if (currentHour >= 18 && currentHour < 21) {
-      return "Good Evening";
-    }
+  if (currentHour >= 5 && currentHour < 12) {
+    return "Good Morning";
+  } else if (currentHour >= 12 && currentHour < 18) {
+    return "Good Afternoon";
+  } else {
+    return "Good Evening";
+  }
   };
 
   return (

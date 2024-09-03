@@ -11,17 +11,20 @@ import BasketIcon from '../components/icons/BasketIcon';
 import GiftIcon from '../components/icons/GiftIcon';
 import { useMutation } from '@tanstack/react-query';
 import { logout } from '../http/api';
+import UserIcon from '../components/icons/UserIcon';
 
-const items = [
+
+const menuItems = (role: string) => {
+  const baseItems = [
     {
         key: "/",
         icon: <Icon component={Home} />,
         label: <NavLink to="/">Home</NavLink>
     },
     {
-        key: '/users',
+        key: '/restaurants',
         icon: <Icon component={FoodIcons} />,
-        label: <NavLink to="/users">Users</NavLink>,
+        label: <NavLink to="/restaurants">Restaurants</NavLink>,
     },
     {
         key: '/products',
@@ -38,7 +41,22 @@ const items = [
         icon: <Icon component={GiftIcon} />,
         label: <NavLink to="/promos">Promos</NavLink>,
     },
-]
+  ]
+
+  if (role === 'admin') {
+        const menus = [...baseItems];
+        menus.splice(1, 0, {
+            key: '/users',
+            icon: <Icon component={UserIcon} />,
+            label: <NavLink to="/users">Users</NavLink>,
+        });
+        return menus;
+    }
+
+  return baseItems
+}
+
+
 
 function Dashboard() {
   const [collapsed, setCollapsed] = useState(false);
@@ -61,6 +79,8 @@ function Dashboard() {
   if (user === null) {
       return <Navigate to="/auth/login" replace={ true } />
   }
+
+  const items = menuItems(user?.role)
   
     return (
         <div>

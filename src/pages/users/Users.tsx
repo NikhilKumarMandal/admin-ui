@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { allUsers } from "../../http/api";
 import { User } from "../../types";
+import UsersFilter from "./UsersFilter";
+
 
 
 const columns = [
@@ -61,6 +63,11 @@ function Users() {
         return <div>Error: {error.message}</div>;
     }
 
+    // const { user } = useAuthStore()
+    // if (user?.role !== 'admin') {
+    //     return <Navigate to="/" replace={true} />;
+    // }
+
     const users = data?.data;
     return (
         <>
@@ -75,7 +82,8 @@ function Users() {
                         title: "Users",
                     },
                 ]}
-            />
+                />
+                <UsersFilter/>
                 <Table columns={columns} dataSource={users} />
                 </Space>
             {/* <ul>
