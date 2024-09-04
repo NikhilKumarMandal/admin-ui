@@ -19,7 +19,7 @@ function UserFrom() {
                 <Card title= "Basic info" bordered={false}>
                   <Row gutter={20}>
                       <Col span={12}>
-                          <Form.Item label="First Name" name="firstname" rules={[
+                          <Form.Item label="First Name" name="firstName" rules={[
                                 {
                                     required: true,
                                     message: "First Name is requried"
@@ -29,7 +29,7 @@ function UserFrom() {
                         </Form.Item>
                       </Col>
                       <Col span={12}>
-                              <Form.Item label="Last Name" name="lastname" rules={[
+                              <Form.Item label="Last Name" name="lastName" rules={[
                                 {
                                       required: true,
                                     message: "Last Name is requried"

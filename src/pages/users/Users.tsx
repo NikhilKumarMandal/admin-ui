@@ -1,57 +1,77 @@
 import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
-import { RightOutlined,PlusOutlined } from "@ant-design/icons";
-import {  Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { allUsers } from "../../http/api";
-import { User } from "../../types";
+import { RightOutlined, PlusOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { allUsers, createUser } from "../../http/api";
+import { User, UserData } from "../../types";
 import UsersFilter from "./UsersFilter";
 import { useState } from "react";
 import UserFrom from "./from/UserFrom";
 
-
-
 const columns = [
     {
-    title: 'ID',
-    dataIndex: 'id',
-    key: 'id',
-  },
-  {
-    title: 'Name',
-    dataIndex: 'firstName',
-    key: 'firstName',
-    render: (_text: string,record: User) =>  {
-    return (
-        <div>
-        {record.firstName} {record.lastName}
-        </div>
-        );
+        title: 'ID',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
+        title: 'Name',
+        dataIndex: 'firstName',
+        key: 'firstName',
+        render: (_text: string, record: User) => {
+            return (
+                <div>
+                    {record.firstName} {record.lastName}
+                </div>
+            );
         }
-  },
-  {
-    title: 'EMAIL',
-    dataIndex: 'email',
-    key: 'email',
-  },
-  {
-    title: 'ROLE',
-    dataIndex: 'role',
-    key: 'role',
-    }, 
-  {
-    title: 'CREATED AT',
-    dataIndex: 'createdAt',
-    key: 'createdAt',
-  },
+    },
+    {
+        title: 'EMAIL',
+        dataIndex: 'email',
+        key: 'email',
+    },
+    {
+        title: 'ROLE',
+        dataIndex: 'role',
+        key: 'role',
+    },
+    {
+        title: 'CREATED AT',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+    },
 ];
 
 function Users() {
+    const [drawerOpen, setDrawerOpen] = useState(false);
+    const queryClient = useQueryClient()
+
+    const [form] = Form.useForm();  
+
     const { data, isLoading, isError, error } = useQuery({
         queryKey: ["users"],
         queryFn: async () => {
-            return await allUsers().then((res) => res.data); 
+            return await allUsers().then((res) => res.data);
         }
     });
+
+    const { mutate: userMutation } = useMutation({
+        mutationKey: ["user"],
+        mutationFn: async (data: UserData) => createUser(data).then((res) => res.data),
+        onSuccess: async () => {
+            queryClient.invalidateQueries({queryKey: ["users"]})
+            setDrawerOpen(false);  
+        }
+    });
+
+    const handleSubmit = async () => {
+
+        await form.validateFields();
+        await userMutation(form.getFieldsValue());  
+        form.resetFields()
+        setDrawerOpen(false)
+    };
 
     if (isLoading) {
         return (
@@ -69,37 +89,32 @@ function Users() {
         token: { colorBgLayout },
     } = theme.useToken();
 
-    // const { user } = useAuthStore()
-    // if (user?.role !== 'admin') {
-    //     return <Navigate to="/" replace={true} />;
-    // }
-
     const users = data?.data;
-    const [drawerOpen, setDrawerOpen] = useState(false);
+
+
     return (
         <>
-            <Space direction="vertical" size="large" style={{width: "100%"}}>
-            <Breadcrumb
-                separator={<RightOutlined />}
-                items={[
-                    {
-                        title: <Link to="/">Dashboard</Link>,
-                    },
-                    {
-                        title: "Users",
-                    },
-                ]}
+            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+                <Breadcrumb
+                    separator={<RightOutlined />}
+                    items={[
+                        {
+                            title: <Link to="/">Dashboard</Link>,
+                        },
+                        {
+                            title: "Users",
+                        },
+                    ]}
                 />
-                <UsersFilter onFilterChange={(filterName: string,filterValue: string) => {
-                        console.log(filterName,filterValue);
-                        
+                <UsersFilter onFilterChange={(filterName: string, filterValue: string) => {
+                    console.log(filterName, filterValue);
                 }}>
                     <Button
-                            type="primary"
-                            icon={<PlusOutlined />}
-                            onClick={() => setDrawerOpen(true)}>
-                            Add User
-                        </Button>
+                        type="primary"
+                        icon={<PlusOutlined />}
+                        onClick={() => setDrawerOpen(true)}>
+                        Add User
+                    </Button>
                 </UsersFilter>
                 <Table columns={columns} dataSource={users} rowKey={"id"} />
                 <Drawer
@@ -109,28 +124,32 @@ function Users() {
                     styles={{ body: { backgroundColor: colorBgLayout } }}
                     open={drawerOpen}
                     onClose={() => {
-                        setDrawerOpen(false);
-                    }}
+                    form.resetFields()
+                    setDrawerOpen(false)}
+                    }
                     extra={
                         <Space>
                             <Button
-                               >
+                                onClick={() => {
+                                    form.resetFields();
+                                    setDrawerOpen(false);
+                                }}>
                                 Cancel
                             </Button>
-                            <Button type="primary" >
+                            <Button type="primary" onClick={handleSubmit}>
                                 Submit
                             </Button>
                         </Space>
                     }>
-                    <Form layout="vertical">
-                        <UserFrom/>
+                    <Form layout="vertical" form={form}>
+                        <UserFrom />
                     </Form>
-                   
                 </Drawer>
-                </Space>
+            </Space>
         </>
     );
 }
 
 export default Users;
+
 
