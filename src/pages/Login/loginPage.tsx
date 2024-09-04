@@ -72,7 +72,7 @@ function LoginPage() {
 
 
   return (
-    <>
+    
       <Layout style={{ height: "100vh", display: "grid", placeItems: "center" }}>
         <Space direction="vertical" align='center' size='large'>
         <Layout.Content style={{ display: 'flex',justifyContent: "center",alignItems: "center" }} >
@@ -139,8 +139,6 @@ function LoginPage() {
         </Space>
         
       </Layout>
-    </>
-    
   )
 }
 
