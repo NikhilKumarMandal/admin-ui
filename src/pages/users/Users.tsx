@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table } from "antd";
+import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
 import { RightOutlined,PlusOutlined } from "@ant-design/icons";
 import {  Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -6,6 +6,7 @@ import { allUsers } from "../../http/api";
 import { User } from "../../types";
 import UsersFilter from "./UsersFilter";
 import { useState } from "react";
+import UserFrom from "./from/UserFrom";
 
 
 
@@ -64,6 +65,10 @@ function Users() {
         return <div>Error: {error.message}</div>;
     }
 
+    const {
+        token: { colorBgLayout },
+    } = theme.useToken();
+
     // const { user } = useAuthStore()
     // if (user?.role !== 'admin') {
     //     return <Navigate to="/" replace={true} />;
@@ -101,6 +106,7 @@ function Users() {
                     title="Create User"
                     width={720}
                     destroyOnClose={true}
+                    styles={{ body: { backgroundColor: colorBgLayout } }}
                     open={drawerOpen}
                     onClose={() => {
                         setDrawerOpen(false);
@@ -116,6 +122,10 @@ function Users() {
                             </Button>
                         </Space>
                     }>
+                    <Form layout="vertical">
+                        <UserFrom/>
+                    </Form>
+                   
                 </Drawer>
                 </Space>
         </>
