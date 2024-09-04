@@ -1,10 +1,11 @@
-import { Breadcrumb, Layout, Space, Spin, Table } from "antd";
-import { RightOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table } from "antd";
+import { RightOutlined,PlusOutlined } from "@ant-design/icons";
+import {  Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { allUsers } from "../../http/api";
 import { User } from "../../types";
 import UsersFilter from "./UsersFilter";
+import { useState } from "react";
 
 
 
@@ -69,6 +70,7 @@ function Users() {
     // }
 
     const users = data?.data;
+    const [drawerOpen, setDrawerOpen] = useState(false);
     return (
         <>
             <Space direction="vertical" size="large" style={{width: "100%"}}>
@@ -86,16 +88,36 @@ function Users() {
                 <UsersFilter onFilterChange={(filterName: string,filterValue: string) => {
                         console.log(filterName,filterValue);
                         
-                }}/>
+                }}>
+                    <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => setDrawerOpen(true)}>
+                            Add User
+                        </Button>
+                </UsersFilter>
                 <Table columns={columns} dataSource={users} rowKey={"id"} />
+                <Drawer
+                    title="Create User"
+                    width={720}
+                    destroyOnClose={true}
+                    open={drawerOpen}
+                    onClose={() => {
+                        setDrawerOpen(false);
+                    }}
+                    extra={
+                        <Space>
+                            <Button
+                               >
+                                Cancel
+                            </Button>
+                            <Button type="primary" >
+                                Submit
+                            </Button>
+                        </Space>
+                    }>
+                </Drawer>
                 </Space>
-            {/* <ul>
-                {users.map((user:User) => (
-                    <li key={user?.id}>
-                        {user?.firstName} {user?.lastName} - {user?.email}
-                    </li>
-                ))}
-            </ul> */}
         </>
     );
 }
