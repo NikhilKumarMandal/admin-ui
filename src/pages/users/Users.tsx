@@ -7,6 +7,7 @@ import { User, UserData } from "../../types";
 import UsersFilter from "./UsersFilter";
 import { useState } from "react";
 import UserFrom from "./from/UserFrom";
+import { PER_PAGE } from "../../constants";
 
 const columns = [
     {
@@ -47,13 +48,31 @@ function Users() {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const queryClient = useQueryClient()
 
+    const [queryParams, setQueryParams] = useState({
+        perPage: PER_PAGE,
+        currentPage: 1
+    })
+
     const [form] = Form.useForm();  
 
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["users"],
-        queryFn: async () => {
-            return await allUsers().then((res) => res.data);
-        }
+    const {
+        data: users,
+        isLoading,
+        isError,
+        error,
+    } = useQuery({
+        queryKey: ['users', queryParams],
+        queryFn: () => {
+            const filteredParams = Object.fromEntries(
+                Object.entries(queryParams).filter((item) => !!item[1])
+            );
+
+            const queryString = new URLSearchParams(
+                filteredParams as unknown as Record<string, string>
+            ).toString();
+            return allUsers(queryString).then((res) => res.data);
+        },
+        
     });
 
     const { mutate: userMutation } = useMutation({
@@ -89,7 +108,7 @@ function Users() {
         token: { colorBgLayout },
     } = theme.useToken();
 
-    const users = data?.data;
+    // const users = data?.data;
 
 
     return (
@@ -116,7 +135,22 @@ function Users() {
                         Add User
                     </Button>
                 </UsersFilter>
-                <Table columns={columns} dataSource={users} rowKey={"id"} />
+                <Table columns={columns} dataSource={users?.data} rowKey={"id"}
+                    pagination={{
+                        total: users?.total,
+                        pageSize: PER_PAGE,
+                        current: queryParams.currentPage,
+                        onChange: (page) => {
+                            console.log(page);
+                            setQueryParams((prev) => {
+                                return {
+                                ...prev,
+                                currentPage: page
+                            }
+                            })
+                        }
+                }}
+                />
                 <Drawer
                     title="Create User"
                     width={720}
