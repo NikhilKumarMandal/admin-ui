@@ -1,7 +1,7 @@
-import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
+import { Alert, Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
 import { RightOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { allUsers, createUser } from "../../http/api";
 import { User, UserData } from "../../types";
 import UsersFilter from "./UsersFilter";
@@ -45,19 +45,19 @@ const columns = [
 ];
 
 function Users() {
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const queryClient = useQueryClient()
+       const [drawerOpen, setDrawerOpen] = useState(false);
+    const queryClient = useQueryClient();
 
     const [queryParams, setQueryParams] = useState({
         perPage: PER_PAGE,
         currentPage: 1
-    })
+    });
 
     const [form] = Form.useForm();  
 
     const {
         data: users,
-        isLoading,
+        isFetching,
         isError,
         error,
     } = useQuery({
@@ -72,47 +72,48 @@ function Users() {
             ).toString();
             return allUsers(queryString).then((res) => res.data);
         },
-        
+        placeholderData: keepPreviousData,
     });
 
     const { mutate: userMutation } = useMutation({
         mutationKey: ["user"],
         mutationFn: async (data: UserData) => createUser(data).then((res) => res.data),
         onSuccess: async () => {
-            queryClient.invalidateQueries({queryKey: ["users"]})
+            queryClient.invalidateQueries({queryKey: ["users"]});
             setDrawerOpen(false);  
-        }
+        },
     });
 
     const handleSubmit = async () => {
-
         await form.validateFields();
         await userMutation(form.getFieldsValue());  
-        form.resetFields()
-        setDrawerOpen(false)
+        form.resetFields();
+        setDrawerOpen(false);
     };
 
-    if (isLoading) {
-        return (
-            <Layout style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <Spin tip="Loading..." size="large" />
-            </Layout>
-        );
-    }
 
-    if (isError) {
-        return <div>Error: {error.message}</div>;
-    }
+
+
 
     const {
         token: { colorBgLayout },
     } = theme.useToken();
 
-    // const users = data?.data;
 
-
-    return (
-        <>
+return (
+    <>
+        {isFetching ? (
+            <Layout
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
+                <Spin tip="Loading..." size="large" />
+            </Layout>
+        ) : (
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Breadcrumb
                     separator={<RightOutlined />}
@@ -125,17 +126,35 @@ function Users() {
                         },
                     ]}
                 />
-                <UsersFilter onFilterChange={(filterName: string, filterValue: string) => {
-                    console.log(filterName, filterValue);
-                }}>
+
+                {/* Conditionally render the error alert */}
+                {isError && (
+                    <Alert
+                        message="Error"
+                        description={error?.message || "Something went wrong!"}
+                        type="error"
+                        showIcon
+                        style={{ marginBottom: 16 }}
+                    />
+                )}
+
+                <UsersFilter
+                    onFilterChange={(filterName: string, filterValue: string) => {
+                        console.log(filterName, filterValue);
+                    }}
+                >
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
-                        onClick={() => setDrawerOpen(true)}>
+                        onClick={() => setDrawerOpen(true)}
+                    >
                         Add User
                     </Button>
                 </UsersFilter>
-                <Table columns={columns} dataSource={users?.data} rowKey={"id"}
+                <Table
+                    columns={columns}
+                    dataSource={users?.data}
+                    rowKey={"id"}
                     pagination={{
                         total: users?.total,
                         pageSize: PER_PAGE,
@@ -144,12 +163,12 @@ function Users() {
                             console.log(page);
                             setQueryParams((prev) => {
                                 return {
-                                ...prev,
-                                currentPage: page
-                            }
-                            })
-                        }
-                }}
+                                    ...prev,
+                                    currentPage: page,
+                                };
+                            });
+                        },
+                    }}
                 />
                 <Drawer
                     title="Create User"
@@ -158,30 +177,34 @@ function Users() {
                     styles={{ body: { backgroundColor: colorBgLayout } }}
                     open={drawerOpen}
                     onClose={() => {
-                    form.resetFields()
-                    setDrawerOpen(false)}
-                    }
+                        form.resetFields();
+                        setDrawerOpen(false);
+                    }}
                     extra={
                         <Space>
                             <Button
                                 onClick={() => {
                                     form.resetFields();
                                     setDrawerOpen(false);
-                                }}>
+                                }}
+                            >
                                 Cancel
                             </Button>
                             <Button type="primary" onClick={handleSubmit}>
                                 Submit
                             </Button>
                         </Space>
-                    }>
+                    }
+                >
                     <Form layout="vertical" form={form}>
                         <UserFrom />
                     </Form>
                 </Drawer>
             </Space>
-        </>
-    );
+        )}
+    </>
+);
+
 }
 
 export default Users;

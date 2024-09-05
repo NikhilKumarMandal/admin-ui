@@ -64,13 +64,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
         setDrawerOpen(false)
     };
 
-    if (isLoading) {
-        return (
-            <Layout style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
-                <Spin tip="Loading..." size="large" />
-            </Layout>
-        );
-    }
+
 
     if (isError) {
         return <div>Error: {error.message}</div>;
@@ -85,7 +79,13 @@ const [drawerOpen, setDrawerOpen] = useState(false);
 
     return (
         <>
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+            
+            { isLoading ? (
+            <Layout style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+                <Spin tip="Loading..." size="large" />
+            </Layout>
+            ) : (
+                <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Breadcrumb
                     separator={<RightOutlined />}
                     items={[
@@ -136,7 +136,10 @@ const [drawerOpen, setDrawerOpen] = useState(false);
                        <TenantFrom/>
                     </Form>
                 </Drawer>
-            </Space>
+                </Space>
+                )
+    }
+
         </>
     );
 }
