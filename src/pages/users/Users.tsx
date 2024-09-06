@@ -39,6 +39,18 @@ const columns = [
         key: 'role',
     },
     {
+        title: 'RESTAURANTS',
+        dataIndex: 'tenant',
+        key: 'tenant',
+        render: (_text: string, record: User) => {
+            return (
+                <div>
+                    {record.tenant?.name}
+                </div>
+            );
+        }
+    },
+    {
         title: 'CREATED AT',
         dataIndex: 'createdAt',
         key: 'createdAt',
