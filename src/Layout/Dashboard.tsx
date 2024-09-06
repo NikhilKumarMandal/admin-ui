@@ -22,11 +22,6 @@ const menuItems = (role: string) => {
         label: <NavLink to="/">Home</NavLink>
     },
     {
-        key: '/restaurants',
-        icon: <Icon component={FoodIcons} />,
-        label: <NavLink to="/tenant">Restaurants</NavLink>,
-    },
-    {
         key: '/products',
         icon: <Icon component={FoodIcons} />,
         label: <NavLink to="/products">Products</NavLink>,
@@ -50,6 +45,12 @@ const menuItems = (role: string) => {
             icon: <Icon component={UserIcon} />,
             label: <NavLink to="/users">Users</NavLink>,
         });
+        menus.splice(2, 0, {
+        key: '/restaurants',
+        icon: <Icon component={FoodIcons} />,
+        label: <NavLink to="/tenant">Restaurants</NavLink>,
+    
+        })
         return menus;
     }
 
@@ -93,7 +94,7 @@ function Dashboard() {
         <div className="logo" >
           <Logo/>           
         </div>
-        <Menu theme="light" defaultSelectedKeys={['/']} mode="inline" items={items} />
+        <Menu theme="light" defaultSelectedKeys={[location.pathname]} mode="inline" items={items} />
       </Sider>
       <Layout>
         <Header style={{ paddingLeft: "16px",paddingRight: "16px", background: colorBgContainer }} >
