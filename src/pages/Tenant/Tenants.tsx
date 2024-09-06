@@ -1,4 +1,4 @@
-import { Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
+import { Alert, Breadcrumb, Button, Drawer, Form, Layout, Space, Spin, Table, theme } from "antd";
 import { RightOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -40,7 +40,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
 
     const [form] = Form.useForm();  
 
-    const { data, isLoading, isError, error } = useQuery({
+    const { data: users, isLoading, isError, error } = useQuery({
         queryKey: ["users"],
         queryFn: async () => {
             return await allTenant().then((res) => res.data);
@@ -66,15 +66,12 @@ const [drawerOpen, setDrawerOpen] = useState(false);
 
 
 
-    if (isError) {
-        return <div>Error: {error.message}</div>;
-    }
 
     const {
         token: { colorBgLayout },
     } = theme.useToken();
 
-    const users = data?.data;
+    // const users = data?.data;
 
 
     return (
@@ -96,7 +93,17 @@ const [drawerOpen, setDrawerOpen] = useState(false);
                             title: "Tenant",
                         },
                     ]}
-                />
+                        />
+                        
+                {isError && (
+                    <Alert
+                        message="Error"
+                        description={error?.message || "Something went wrong!"}
+                        type="error"
+                        showIcon
+                        style={{ marginBottom: 16 }}
+                    />
+                )}
                 <TenantFilter onFilterChange={(filterName: string, filterValue: string) => {
                     console.log(filterName, filterValue);
                 }}>
@@ -107,7 +114,7 @@ const [drawerOpen, setDrawerOpen] = useState(false);
                         Add Tenant
                     </Button>
                 </TenantFilter>
-                <Table columns={columns} dataSource={users} rowKey={"id"} />
+                <Table columns={columns} dataSource={users?.data} rowKey={"id"} />
                 <Drawer
                     title="Create User"
                     width={720}

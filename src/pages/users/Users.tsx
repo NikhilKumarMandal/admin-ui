@@ -3,11 +3,12 @@ import { RightOutlined, PlusOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { allUsers, createUser } from "../../http/api";
-import { User, UserData } from "../../types";
+import { FieldData, User, UserData } from "../../types";
 import UsersFilter from "./UsersFilter";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import UserFrom from "./from/UserFrom";
 import { PER_PAGE } from "../../constants";
+import { debounce } from "lodash";
 
 const columns = [
     {
@@ -45,7 +46,7 @@ const columns = [
 ];
 
 function Users() {
-       const [drawerOpen, setDrawerOpen] = useState(false);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const queryClient = useQueryClient();
 
     const [queryParams, setQueryParams] = useState({
@@ -53,7 +54,29 @@ function Users() {
         currentPage: 1
     });
 
-    const [form] = Form.useForm();  
+    const [form] = Form.useForm();
+    const [filterForm] = Form.useForm()
+
+        const debouncedQUpdate = useMemo(() => {
+        return debounce((value: string | undefined) => {
+            setQueryParams((prev) => ({ ...prev, q: value, currentPage: 1 }));
+        }, 500);
+    }, []);
+
+    const onFilterChange = (changedFields: FieldData[]) => {
+    const changedFilterFields = changedFields.map((item) => (
+        {
+            [item.name[0]]: item.value
+        }
+    )).reduce((acc, item) => ({ ...acc, ...item }), {});
+
+    if ('q' in changedFilterFields) {
+            debouncedQUpdate(changedFilterFields.q);
+        } else {
+            setQueryParams((prev) => ({ ...prev, ...changedFilterFields, currentPage: 1 }));
+        }
+    };
+
 
     const {
         data: users,
@@ -136,13 +159,11 @@ return (
                         showIcon
                         style={{ marginBottom: 16 }}
                     />
-                )}
+                    )}
+                    
 
-                <UsersFilter
-                    onFilterChange={(filterName: string, filterValue: string) => {
-                        console.log(filterName, filterValue);
-                    }}
-                >
+                    <Form form={filterForm} onFieldsChange={onFilterChange}>
+                <UsersFilter>
                     <Button
                         type="primary"
                         icon={<PlusOutlined />}
@@ -151,6 +172,9 @@ return (
                         Add User
                     </Button>
                 </UsersFilter>
+                    </Form>
+
+
                 <Table
                     columns={columns}
                     dataSource={users?.data}
