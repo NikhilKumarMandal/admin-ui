@@ -4,7 +4,7 @@ import { allTenant } from "../../../http/api"
 import { Tenant } from "../../../types"
 
 
-function UserFrom() {
+function UserFrom({ isEditMode = false }: { isEditMode: boolean }) {
 
     const { data: tenants } = useQuery({
         queryKey: ["tenant"],
@@ -51,20 +51,25 @@ function UserFrom() {
                   </Row>
                   </Card>  
                   
-                <Card title= "Security info" bordered={false}>
-                  <Row gutter={20}>
-                        <Col span={12}>
-                          <Form.Item label="Password" name="password" rules={[
-                                {
-                                    required: true,
-                                    message: "Password is requried"
-                              }
-                          ]}>
-                              <Input size="large" type="password"/>
-                        </Form.Item>
-                      </Col>
-                  </Row>
-                  </Card>  
+                    {!isEditMode && (
+                        <Card title="Security info" bordered={false}>
+                            <Row gutter={20}>
+                                <Col span={12}>
+                                    <Form.Item
+                                        label="Passoword"
+                                        name="password"
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: 'Password required',
+                                            },
+                                        ]}>
+                                        <Input size="large" type="password" />
+                                    </Form.Item>
+                                </Col>
+                            </Row>
+                        </Card>
+                    )} 
                 <Card title= "Security info" bordered={false}>
                   <Row gutter={20}>
                         <Col span={12}>

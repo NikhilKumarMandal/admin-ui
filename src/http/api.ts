@@ -1,4 +1,4 @@
-import { Credentials, Tenant, UserData } from './../types';
+import { Credentials, Tenant, UpdateUserData, UserData } from './../types';
 import { api } from './client';
 
 
@@ -12,3 +12,4 @@ export const allUsers = (queryString: string) => api.get(`/api/v1/users?${queryS
 export const allTenant = () => api.get("/api/v1/tenant/")
 export const createTenant = (tenantData: Tenant) => api.post("/api/v1/tenant/",tenantData)
 export const createUser = (userData: UserData) => api.post("/api/v1/users/", userData)
+export const updateUser = (user: UpdateUserData,id: string) => api.patch(`/api/v1/users/${id}`, user)

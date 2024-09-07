@@ -36,3 +36,10 @@ export type FieldData = {
     name: string[];
     value?: string;
 }
+
+
+export type UpdateUserData = {
+    firstName: string
+    lastName: string
+    role: string
+}
