@@ -131,7 +131,8 @@ const [drawerOpen, setDrawerOpen] = useState(false);
                                 onClick={() => {
                                     form.resetFields();
                                     setDrawerOpen(false);
-                                }}>
+                                }}
+                            >
                                 Cancel
                             </Button>
                             <Button type="primary" onClick={handleSubmit}>

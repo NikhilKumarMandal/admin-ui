@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuthStore } from "../store/store";
+import { AUTH_SERVICE } from "./api";
 
 
 export const api = axios.create({
@@ -16,7 +17,7 @@ export const api = axios.create({
 
 const refreshToken = async () => {
     await axios.post(
-        `${import.meta.env.VITE_BACKEND_API_URL}/api/v1/auth/refresh`,
+        `${import.meta.env.VITE_BACKEND_API_URL}${AUTH_SERVICE}/api/v1/auth/refresh`,
         {},
         {
             withCredentials: true,
