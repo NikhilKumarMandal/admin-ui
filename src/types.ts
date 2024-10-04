@@ -21,6 +21,11 @@ export type Tenant = {
     address: string;
 };
 
+export type Category = {
+    _id: string,
+    name: string
+}
+
 
 export interface UserData {
   firstName: string

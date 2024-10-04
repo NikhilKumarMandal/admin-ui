@@ -1,7 +1,6 @@
 import { Breadcrumb, Button, Form, Space } from "antd"
 import { Link } from "react-router-dom"
 import { RightOutlined,PlusOutlined} from "@ant-design/icons";
-import { FieldData } from "../../types";
 import ProductFilter from "./ProductFilter";
 
 function Product() {
