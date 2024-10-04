@@ -24,7 +24,7 @@ const menuItems = (role: string) => {
     {
         key: '/products',
         icon: <Icon component={FoodIcons} />,
-        label: <NavLink to="/products">Products</NavLink>,
+        label: <NavLink to="/product">Products</NavLink>,
     },
     {
         key: '/orders',
