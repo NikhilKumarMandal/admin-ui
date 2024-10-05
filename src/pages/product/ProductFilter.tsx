@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { Card, Col, Form, Input, Row, Select } from 'antd';
+import { Card, Col, Form, Input, Row, Select, Space, Switch, Typography } from 'antd';
 import {  getCategories, getTenants } from '../../http/api';
 import { Category, Tenant } from '../../types';
 
@@ -31,12 +31,12 @@ const ProductFilter = ({ children }: ProductFilterProps) => {
             <Row justify="space-between">
                 <Col span={16}>
                     <Row gutter={20}>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item name="q">
                                 <Input.Search allowClear={true} placeholder="Search" />
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Form.Item name="role">
                                 <Select
                                     style={{ width: '100%' }}
@@ -57,7 +57,7 @@ const ProductFilter = ({ children }: ProductFilterProps) => {
                                 </Select>
                             </Form.Item>
                         </Col>
-                        <Col span={8}>
+                        <Col span={6}>
                             <Select
                                 style={{ width: '100%' }}
                                 placeholder="restaurants"
@@ -75,6 +75,16 @@ const ProductFilter = ({ children }: ProductFilterProps) => {
                                  })
                               }
                             </Select>
+                      </Col>
+                       <Col span={6}>
+                            <Space>
+                                <Form.Item name="isPublish">
+                                    <Switch defaultChecked={false} onChange={() => {}} />
+                                </Form.Item>
+                                <Typography.Text style={{ marginBottom: 22, display: 'block' }}>
+                                    Show only published
+                                </Typography.Text>
+                            </Space>
                         </Col>
                     </Row>
                 </Col>

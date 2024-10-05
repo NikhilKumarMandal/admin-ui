@@ -73,7 +73,9 @@ export type ProductAttribute = {
 export type Products = {
     _id: string;
     name: string;
-    image: string;
+    image: {
+        url: string
+    };
     description: string;
     category: Category;
     priceConfiguration: PriceConfiguration;

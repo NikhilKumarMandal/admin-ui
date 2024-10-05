@@ -19,7 +19,7 @@ const columns = [
             return (
                 <div>
                     <Space>
-                        <Image width={60} src={record.image} preview={false}  />
+                        <Image width={60} src={record.image.url} preview={false}  />
                         <Typography.Text>{record.name}</Typography.Text>
                     </Space>
                 </div>
@@ -82,6 +82,8 @@ function Product() {
         },
         placeholderData: keepPreviousData,
     });
+
+    console.log("products",products)
     
         return (
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
