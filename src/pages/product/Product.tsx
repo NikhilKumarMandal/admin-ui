@@ -1,6 +1,6 @@
-import { Breadcrumb, Button, Form, Space, Table, Typography,Image, Tag } from "antd"
+import { Breadcrumb, Button, Form, Space, Table, Typography,Image, Tag, Spin } from "antd"
 import { Link } from "react-router-dom"
-import { RightOutlined,PlusOutlined} from "@ant-design/icons";
+import { RightOutlined,PlusOutlined, LoadingOutlined} from "@ant-design/icons";
 import ProductFilter from "./ProductFilter";
 import { PER_PAGE } from "../../constants";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -61,14 +61,17 @@ const columns = [
 function Product() {
 
     const [queryParams, setQueryParams] = useState({
-        perPage: PER_PAGE,
-        currentPage: 1
+        limit: PER_PAGE,
+        page: 1
     });
 
     const [filterForm] = Form.useForm()
 
     const {
         data: products,
+        isFetching,
+        error,
+        isError
     } = useQuery({
         queryKey: ['products', queryParams],
         queryFn: () => {
@@ -101,7 +104,7 @@ function Product() {
     if ('q' in changedFilterFields) {
             debouncedQUpdate(changedFilterFields.q);
         } else {
-            setQueryParams((prev) => ({ ...prev, ...changedFilterFields, currentPage: 1 }));
+            setQueryParams((prev) => ({ ...prev, ...changedFilterFields, page: 1 }));
         }
     };
     
@@ -118,6 +121,11 @@ function Product() {
                         },
                     ]}
                 />
+
+                {isFetching && (
+                        <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
+                    )}
+                {isError && <Typography.Text type="danger">{error.message}</Typography.Text>}
           
 
                 <Form form={filterForm} onFieldsChange={onFilterChange}>
@@ -154,14 +162,14 @@ function Product() {
                     rowKey={"id"}
                     pagination={{
                         total: products?.total,
-                        pageSize: PER_PAGE,
-                        current: queryParams.currentPage,
+                        pageSize: queryParams.limit,
+                        current: queryParams.page,
                         onChange: (page) => {
                             console.log(page);
                             setQueryParams((prev:any) => {
                                 return {
                                     ...prev,
-                                    currentPage: page,
+                                    page: page,
                                 };
                             });
                         },
