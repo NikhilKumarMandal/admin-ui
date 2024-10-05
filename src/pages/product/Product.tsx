@@ -6,8 +6,9 @@ import { PER_PAGE } from "../../constants";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { allProducts } from "../../http/api";
 import { format } from "date-fns";
-import { useState } from "react";
-import { Products } from "../../types";
+import { useMemo, useState } from "react";
+import { FieldData, Products } from "../../types";
+import { debounce } from "lodash";
 
 
 const columns = [
@@ -83,7 +84,26 @@ function Product() {
         placeholderData: keepPreviousData,
     });
 
-    console.log("products",products)
+    const debouncedQUpdate = useMemo(() => {
+    return debounce((value: string | undefined) => {
+            setQueryParams((prev) => ({ ...prev, q: value, currentPage: 1 }));
+        }, 500);
+    }, []);
+
+    
+    const onFilterChange = (changedFields: FieldData[]) => {
+    const changedFilterFields = changedFields.map((item) => (
+        {
+            [item.name[0]]: item.value
+        }
+    )).reduce((acc, item) => ({ ...acc, ...item }), {});
+
+    if ('q' in changedFilterFields) {
+            debouncedQUpdate(changedFilterFields.q);
+        } else {
+            setQueryParams((prev) => ({ ...prev, ...changedFilterFields, currentPage: 1 }));
+        }
+    };
     
         return (
             <Space direction="vertical" size="large" style={{ width: "100%" }}>
@@ -100,7 +120,7 @@ function Product() {
                 />
           
 
-                <Form form={filterForm} onFieldsChange={() => {}}>
+                <Form form={filterForm} onFieldsChange={onFilterChange}>
                     <ProductFilter>
                         <Button
                             type="primary"
