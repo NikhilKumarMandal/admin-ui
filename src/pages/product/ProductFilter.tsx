@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, Col, Form, Input, Row, Select } from 'antd';
-import { allTenant, getCategories, getTenants } from '../../http/api';
+import {  getCategories, getTenants } from '../../http/api';
 import { Category, Tenant } from '../../types';
 
 type ProductFilterProps = {
