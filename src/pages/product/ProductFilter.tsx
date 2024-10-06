@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Card, Col, Form, Input, Row, Select, Space, Switch, Typography } from 'antd';
 import {  getCategories, getTenants } from '../../http/api';
 import { Category, Tenant } from '../../types';
+import { useAuthStore } from '../../store/store';
 
 type ProductFilterProps = {
     children?: React.ReactNode;
@@ -9,6 +10,9 @@ type ProductFilterProps = {
 };
 
 const ProductFilter = ({ children }: ProductFilterProps) => {
+
+
+    const { user } = useAuthStore()
     
     const { data: restaurants, } = useQuery({
         queryKey: ["restaurants"],
@@ -56,8 +60,10 @@ const ProductFilter = ({ children }: ProductFilterProps) => {
                                   }
                                 </Select>
                             </Form.Item>
-                        </Col>
-                      <Col span={6}>
+                      </Col>
+                      {
+                          user?.role === "admin" && (
+                        <Col span={6}>
                           <Form.Item name="tenantId">
                             <Select
                                 style={{ width: '100%' }}
@@ -78,6 +84,8 @@ const ProductFilter = ({ children }: ProductFilterProps) => {
                               </Select>
                               </Form.Item>
                       </Col>
+                          )
+                      }
                        <Col span={6}>
                             <Space>
                                 <Form.Item name="isPublish">

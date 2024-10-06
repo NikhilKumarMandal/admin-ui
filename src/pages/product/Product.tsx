@@ -9,6 +9,7 @@ import { format } from "date-fns";
 import { useMemo, useState } from "react";
 import { FieldData, Products } from "../../types";
 import { debounce } from "lodash";
+import { useAuthStore } from "../../store/store";
 
 
 const columns = [
@@ -60,9 +61,12 @@ const columns = [
 
 function Product() {
 
+    const {user} = useAuthStore()
+
     const [queryParams, setQueryParams] = useState({
         limit: PER_PAGE,
-        page: 1
+        page: 1,
+        tenantId: user!.role === 'manager' ? user?.tenant?.id : undefined,
     });
 
     const [filterForm] = Form.useForm()
