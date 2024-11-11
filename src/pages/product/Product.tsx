@@ -1,6 +1,6 @@
-import { Breadcrumb, Button, Form, Space, Table, Typography,Image, Tag, Spin } from "antd"
+import { Breadcrumb, Button, Form, Space, Table, Typography,Image, Tag, Spin, Layout, Drawer, theme } from "antd"
 import { Link } from "react-router-dom"
-import { RightOutlined,PlusOutlined, LoadingOutlined} from "@ant-design/icons";
+import { RightOutlined,PlusOutlined} from "@ant-design/icons";
 import ProductFilter from "./ProductFilter";
 import { PER_PAGE } from "../../constants";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
@@ -10,6 +10,7 @@ import { useMemo, useState } from "react";
 import { FieldData, Products } from "../../types";
 import { debounce } from "lodash";
 import { useAuthStore } from "../../store/store";
+import ProductFrom from "./from/ProductFrom";
 
 
 const columns = [
@@ -61,8 +62,9 @@ const columns = [
 
 function Product() {
 
-    const {user} = useAuthStore()
-
+    const { user } = useAuthStore()
+    const [form] = Form.useForm();
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [queryParams, setQueryParams] = useState({
         limit: PER_PAGE,
         page: 1,
@@ -75,7 +77,7 @@ function Product() {
         data: products,
         isFetching,
         error,
-        isError
+        isError,
     } = useQuery({
         queryKey: ['products', queryParams],
         queryFn: () => {
@@ -112,8 +114,28 @@ function Product() {
         }
     };
     
-        return (
-            <Space direction="vertical" size="large" style={{ width: "100%" }}>
+    const {
+        token: { colorBgLayout },
+    } = theme.useToken();
+
+    const handleSubmit = () => {
+        
+    }
+    return (
+            <>
+             {isFetching ? (
+            <Layout
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                }}
+            >
+                <Spin tip="Loading..." size="large" />
+            </Layout>
+        ) :(
+                         <Space direction="vertical" size="large" style={{ width: "100%" }}>
                 <Breadcrumb
                     separator={<RightOutlined />}
                     items={[
@@ -126,9 +148,6 @@ function Product() {
                     ]}
                 />
 
-                {isFetching && (
-                        <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-                    )}
                 {isError && <Typography.Text type="danger">{error.message}</Typography.Text>}
           
 
@@ -137,7 +156,7 @@ function Product() {
                         <Button
                             type="primary"
                             icon={<PlusOutlined />}
-                            onClick={() => { }}
+                            onClick={() => { setDrawerOpen(true) }}
                         >
                             Add Product
                         </Button>
@@ -182,8 +201,42 @@ function Product() {
                             return `Showing ${range[0]}-${range[1]} of ${total} items`;
                         },
                     }}
-                />
-            </Space>
+                        />
+                <Drawer
+                    title={"create Product"}
+                    width={720}
+                    destroyOnClose={true}
+                    styles={{ body: { backgroundColor: colorBgLayout } }}
+                    open={drawerOpen}
+                    onClose={() => {
+                        // form.resetFields();
+                        // setCurrentEditingUser(null)
+                        setDrawerOpen(false);
+                    }}
+                    extra={
+                        <Space>
+                            <Button
+                                onClick={() => {
+                                    form.resetFields();
+                                    setDrawerOpen(false);
+                                }}
+                            >
+                                Cancel
+                            </Button>
+                            <Button type="primary" onClick={handleSubmit}>
+                                Submit
+                            </Button>
+                        </Space>
+                    }
+                >
+                    <Form layout="vertical" form={form}>
+                        <ProductFrom form={form}/>
+                    </Form>
+                </Drawer>
+            </Space>       
+        )}
+     </>
+
         )
     }
 
