@@ -20,7 +20,7 @@ const getSelf = async () => {
 }
 
 function LoginPage() {
-
+  console.log("ENV",import.meta.env.VITE_BACKEND_API_URL);
   const { setUser, logout: logoutUserFromStore } = useAuthStore()
   const { isAllowed } = usePermission()
   
@@ -65,10 +65,6 @@ function LoginPage() {
     }
 
   })
-
-
-
-
 
 
   return (

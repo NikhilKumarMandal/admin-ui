@@ -8,11 +8,13 @@ import { getCategories, getTenants } from '../../../http/api';
 
 import { useAuthStore } from '../../../store/store';
 import ProductImage from './ProductImage';
+import Pricing from './Pricing';
+import Attributes from './Attributes';
 
 function ProductFrom({ form }: { form: FormInstance }) {
     const { user } = useAuthStore();
     const selectedCategory = Form.useWatch('categoryId');
-  console.log(selectedCategory);
+    console.log(selectedCategory);
   
     const { data: categories } = useQuery({
         queryKey: ['categories'],
@@ -128,10 +130,11 @@ function ProductFrom({ form }: { form: FormInstance }) {
                                 </Col>
                             </Row>
                         </Card>
-                    )}
+                  )}
 
-                    {/* {selectedCategory && <Pricing selectedCategory={selectedCategory} />}
-                    {selectedCategory && <Attributes selectedCategory={selectedCategory} />} */}
+
+                    {selectedCategory && <Pricing  selectCategory={selectedCategory} />}
+                    {selectedCategory && <Attributes />}
 
                     <Card title="Other properties" bordered={false}>
                         <Row gutter={24}>
