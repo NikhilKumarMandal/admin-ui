@@ -70,6 +70,10 @@ export type ProductAttribute = {
     value: string | boolean;
 };
 
+
+export type ImageField = { file: File };
+export type CreateProductData = Products & { image: ImageField };
+
 export type Products = {
     _id: string;
     name: string;

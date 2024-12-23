@@ -134,7 +134,7 @@ function ProductFrom({ form }: { form: FormInstance }) {
 
 
                     {selectedCategory && <Pricing  selectCategory={selectedCategory} />}
-                    {selectedCategory && <Attributes />}
+                  {selectedCategory && <Attributes selectCategory={selectedCategory} />}
 
                     <Card title="Other properties" bordered={false}>
                         <Row gutter={24}>
