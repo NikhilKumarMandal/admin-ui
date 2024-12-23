@@ -17,7 +17,7 @@ function Pricing({ selectCategory }: PrincingProps) {
     });
 
     if (!fetchedCategory) return null;
-    return         <Card title={<Typography.Text>Product price</Typography.Text>} bordered={false}>
+    return <Card title={<Typography.Text>Product price</Typography.Text>} bordered={false}>
             {Object.entries(fetchedCategory?.priceConfiguration).map(
                 ([configurationKey, configurationValue]) => {
                     return (

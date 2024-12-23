@@ -33,10 +33,8 @@ export const getCategories = () => api.get(`${CATALOG_SERVICE}/api/v1/categories
 
 export const getCategory = (id: string) => api.get(`${CATALOG_SERVICE}/categories/${id}`);
 
-export const allProducts = (queryString: string) => api.get(`${CATALOG_SERVICE}/api/v1/products?${queryString}`)
-
 export const getProducts = (queryParam: string) =>
-    api.get(`${CATALOG_SERVICE}/products?${queryParam}`);
+    api.get(`${CATALOG_SERVICE}/api/v1/products?${queryParam}`);
 
 export const createProduct = (product: FormData) =>
     api.post(`${CATALOG_SERVICE}/products`, product, {

@@ -1,21 +1,16 @@
 import { Card, Col, Form,  Input,FormInstance, Row, Select, Space, Switch, Typography } from 'antd';
-
 import { Category, Tenant } from '../../../types';
 import { useQuery } from '@tanstack/react-query';
 import { getCategories, getTenants } from '../../../http/api';
-
-
-
-import { useAuthStore } from '../../../store/store';
 import ProductImage from './ProductImage';
 import Pricing from './Pricing';
 import Attributes from './Attributes';
+import { useAuthStore } from '../../../store/store';
 
 function ProductFrom({ form }: { form: FormInstance }) {
     const { user } = useAuthStore();
     const selectedCategory = Form.useWatch('categoryId');
-    console.log(selectedCategory);
-  
+    console.log("selectedCategory",selectedCategory);
     const { data: categories } = useQuery({
         queryKey: ['categories'],
         queryFn: () => {
@@ -30,7 +25,7 @@ function ProductFrom({ form }: { form: FormInstance }) {
         },
     });
   return (
-            <Row>
+        <Row>
             <Col span={24}>
                 <Space direction="vertical" size="large">
                     <Card title="Product info" bordered={false}>
@@ -130,11 +125,10 @@ function ProductFrom({ form }: { form: FormInstance }) {
                                 </Col>
                             </Row>
                         </Card>
-                  )}
+                    )}
 
-
-                    {selectedCategory && <Pricing  selectCategory={selectedCategory} />}
-                  {selectedCategory && <Attributes selectCategory={selectedCategory} />}
+                    {selectedCategory && <Pricing selectCategory={selectedCategory} />}
+                    {selectedCategory && <Attributes selectCategory={selectedCategory} />}
 
                     <Card title="Other properties" bordered={false}>
                         <Row gutter={24}>
